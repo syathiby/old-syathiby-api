@@ -63,4 +63,57 @@ class Labels extends ResourceController
         }
         return $this->respond(['Code' => '401','Message' => 'UnAuthorized'], 401);
     }
+    public function showLabel($name = null)
+    {
+        $token = $this->request->getServer('HTTP_AUTHORIZATION');
+
+        if ($token){
+            $token = str_replace('Bearer ', '', $token);
+
+            $cache = \Config\Services::cache();
+            $userData = $cache->get('user_' . $token);
+
+            if($userData){
+                $model = new LabelModel();
+
+                $data = $model->getLabelBy($name);
+
+                if ($data) {
+                    return $this->respond($data, 200);
+                } else {
+                    return $this->fail('Post not found.', 404);
+                }
+            }
+        }
+        return $this->respond(['Code' => '401','Message' => 'UnAuthorized'], 401);
+    }
+    public function deleteLabels($id = null)
+    {
+        $token = $this->request->getServer('HTTP_AUTHORIZATION');
+
+        if ($token){
+            $token = str_replace('Bearer ', '', $token);
+
+            $cache = \Config\Services::cache();
+            $userData = $cache->get('user_' . $token);
+
+            if($userData){
+                $model = new LabelModel();
+
+                if ($id === null) {
+                    return $this->fail('Post ID not provided.', 400);
+                }
+
+                $model->deletePosts($id);
+
+                if ($model->affectedRows() > 0) {
+                    return $this->respondDeleted(['message' => 'Success'], 200);
+                } else {
+                    return $this->fail('Error! Failed to delete post.', 500);
+                }
+
+            }
+        }
+        return $this->respond(['Code' => '401','Message' => 'UnAuthorized'], 401);
+    }
 }

@@ -45,8 +45,17 @@ $routes->post('v1/admin/post', 'Api::createPost');
 $routes->put('v1/admin/post/(:num)', 'Api::updatePost/$1');
 $routes->delete('v1/admin/post/(:num)', 'Api::deletePost/$1');
 
+// V1 Admin Label
 $routes->get('v1/admin/label','Labels::showLabels');
+$routes->get('v1/admin/label/(:segment)','Labels::showLabel/$1');
 $routes->post('v1/admin/label','Labels::addLabels');
+$routes->put('v1/admin/label/(:num)','Labels::addLabels');
+$routes->delete('v1/admin/label/(:num)','Labels::deleteLabels/$1');
+
+// V1 Admin Banner
+$routes->post('v1/admin/banner','Banner::postBanner');
+$routes->get('v1/admin/banner', 'Banner::getBanner');
+$routes->delete('v1/admin/banner/(:num)', 'Banner::deletBanners/$1');
 
 // v1 Api Login
 $routes->post('v1/login', 'Auth::signIn');

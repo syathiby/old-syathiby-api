@@ -4,28 +4,23 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class LabelModel extends Model
+class BannerModel extends Model
 {
-    protected $table = 'labels';
+    protected $table = 'banner';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['name', 'color', 'created_by', 'updated_by'];
+    protected $allowedFields = ['title', 'caption', 'image', 'link', 'created_by'];
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
 
-    public function createLabel($data)
+    public function createBanner($data)
     {
         return $this->insert($data);
     }
 
-    public function getLabel()
+    public function getBanners()
     {
         return $this->findAll();
-    }
-
-    public function getLabelBy($name)
-    {
-        return $this->where('name', $name)->first();
     }
 
     public function updateLabel($id, $data)
@@ -33,7 +28,7 @@ class LabelModel extends Model
         return $this->update($id, $data);
     }
 
-    public function deleteLabel($id)
+    public function deleteBanner($id)
     {
         return $this->delete($id);
     }
