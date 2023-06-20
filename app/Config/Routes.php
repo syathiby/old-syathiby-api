@@ -57,6 +57,15 @@ $routes->post('v1/admin/banner','Banner::postBanner');
 $routes->get('v1/admin/banner', 'Banner::getBanner');
 $routes->delete('v1/admin/banner/(:num)', 'Banner::deletBanners/$1');
 
+//  V1 Admin Facility
+$routes->get('v1/admin/facility', 'Facility::getFacility');
+$routes->post('v1/admin/facility', 'Facility::createFacility');
+$routes->delete('v1/admin/facility/(:num)', 'Facility::delFacility/$1');
+
+//  V1 Admin Galeri
+$routes->get('v1/admin/galeri', 'Gallery::getGal');
+$routes->post('v1/admin/galeri', 'Gallery::createGallery');
+
 // v1 Api Login
 $routes->post('v1/login', 'Auth::signIn');
 $routes->post('v1/logout', 'Auth::logoutUser');
