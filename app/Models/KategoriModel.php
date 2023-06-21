@@ -4,21 +4,21 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class GalleryModel extends Model
+class KategoriModel extends Model
 {
-    protected $table = 'gallery';
+    protected $table = 'kategori';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['title', 'type', 'filename', 'caption', 'kategori', 'created_by'];
+    protected $allowedFields = ['nkategori', 'created_by', 'updated_by'];
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
 
-    public function addGaleri($data)
+    public function createKategori($data)
     {
         return $this->insert($data);
     }
 
-    public function getGaleri()
+    public function getKat()
     {
         return $this->findAll();
     }
@@ -28,8 +28,9 @@ class GalleryModel extends Model
         return $this->update($id, $data);
     }
 
-    public function deleteFa($id)
+    public function deleteKat($id)
     {
         return $this->delete($id);
     }
+
 }

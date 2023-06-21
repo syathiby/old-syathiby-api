@@ -35,44 +35,56 @@ $routes->setAutoRoute(true);
 $routes->get('/', 'Home::index');
 
 // v1 API Post
-$routes->get('v1/post', 'Api::posts');
-$routes->get('v1/post/(:segment)', 'Api::post/$1');
+$routes->group('v1', function($routes) {
+    // v1 API Post
+    $routes->get('post', 'Api::posts');
+    $routes->get('post/(:segment)', 'Api::post/$1');
 
-// V1 Admin Post
-$routes->get('v1/admin/post', 'API::postsAdmin');
-$routes->get('v1/admin/post/(:segment)', 'Api::postAdmin/$1');
-$routes->post('v1/admin/post', 'Api::createPost');
-$routes->put('v1/admin/post/(:num)', 'Api::updatePost/$1');
-$routes->delete('v1/admin/post/(:num)', 'Api::deletePost/$1');
+    // V1 Admin Post
+    $routes->group('admin/post', function($routes) {
+        $routes->get('', 'API::postsAdmin');
+        $routes->get('(:segment)', 'Api::postAdmin/$1');
+        $routes->post('', 'Api::createPost');
+        $routes->put('(:num)', 'Api::updatePost/$1');
+        $routes->delete('(:num)', 'Api::deletePost/$1');
+    });
 
-// V1 Admin Label
-$routes->get('v1/admin/label','Labels::showLabels');
-$routes->get('v1/admin/label/(:segment)','Labels::showLabel/$1');
-$routes->post('v1/admin/label','Labels::addLabels');
-$routes->put('v1/admin/label/(:num)','Labels::addLabels');
-$routes->delete('v1/admin/label/(:num)','Labels::deleteLabels/$1');
+    // V1 Admin Label
+    $routes->group('admin/label', function($routes) {
+        $routes->get('', 'Labels::showLabels');
+        $routes->get('(:segment)', 'Labels::showLabel/$1');
+        $routes->post('', 'Labels::addLabels');
+        $routes->put('(:num)', 'Labels::addLabels');
+        $routes->delete('(:num)', 'Labels::deleteLabels/$1');
+    });
 
-// V1 Admin Banner
-$routes->post('v1/admin/banner','Banner::postBanner');
-$routes->get('v1/admin/banner', 'Banner::getBanner');
-$routes->delete('v1/admin/banner/(:num)', 'Banner::deletBanners/$1');
+    // V1 Admin Banner
+    $routes->post('admin/banner', 'Banner::postBanner');
+    $routes->get('admin/banner', 'Banner::getBanner');
+    $routes->delete('admin/banner/(:num)', 'Banner::deletBanners/$1');
 
-//  V1 Admin Facility
-$routes->get('v1/admin/facility', 'Facility::getFacility');
-$routes->post('v1/admin/facility', 'Facility::createFacility');
-$routes->delete('v1/admin/facility/(:num)', 'Facility::delFacility/$1');
+    // V1 Admin Facility
+    $routes->get('admin/facility', 'Facility::getFacility');
+    $routes->post('admin/facility', 'Facility::createFacility');
+    $routes->delete('admin/facility/(:num)', 'Facility::delFacility/$1');
 
-//  V1 Admin Galeri
-$routes->get('v1/admin/galeri', 'Gallery::getGal');
-$routes->post('v1/admin/galeri', 'Gallery::createGallery');
+    // V1 Admin Galeri
+    $routes->get('admin/galeri', 'Gallery::getGal');
+    $routes->post('admin/galeri', 'Gallery::createGallery');
 
-// v1 Api Login
-$routes->post('v1/login', 'Auth::signIn');
-$routes->post('v1/logout', 'Auth::logoutUser');
+    // V1 Admin Kategori Galeri
+    $routes->post('admin/kategori', 'Gallery::addKategori');
+    $routes->get('admin/kategori', 'Gallery::getKategori');
+    $routes->delete('admin/kategori/(:num)', 'Gallery::deleteKategori/$1');
 
-// v1 Api create User
-$routes->post('v1/sign-up', 'Auth::createUser');
-$routes->get('v1/users', 'Auth::getUsers');
+    // v1 Api Login
+    $routes->post('login', 'Auth::signIn');
+    $routes->post('logout', 'Auth::logoutUser');
+
+    // v1 Api create User
+    $routes->post('sign-up', 'Auth::createUser');
+    $routes->get('users', 'Auth::getUsers');
+});
 
 
 /*
