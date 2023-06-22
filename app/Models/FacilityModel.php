@@ -23,6 +23,11 @@ class FacilityModel extends Model
         return $this->findAll();
     }
 
+    public function getFaById($id)
+    {
+        return $this->where('id', $id)->first();
+    }
+
     public function updateLabel($id, $data)
     {
         return $this->update($id, $data);

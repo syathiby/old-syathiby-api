@@ -65,12 +65,14 @@ $routes->group('v1', function($routes) {
 
     // V1 Admin Facility
     $routes->get('admin/facility', 'Facility::getFacility');
+    $routes->get('admin/facility/(:num)', 'Facility::getFacilitys/$1');
     $routes->post('admin/facility', 'Facility::createFacility');
     $routes->delete('admin/facility/(:num)', 'Facility::delFacility/$1');
 
     // V1 Admin Galeri
     $routes->get('admin/galeri', 'Gallery::getGal');
     $routes->post('admin/galeri', 'Gallery::createGallery');
+    $routes->delete('admin/galeri/(:num)', 'Gallery::deleteGaleri/$1');
 
     // V1 Admin Kategori Galeri
     $routes->post('admin/kategori', 'Gallery::addKategori');

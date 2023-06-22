@@ -25,22 +25,51 @@ class Gallery extends ResourceController
             {
                 $model = new GalleryModel();
 
-                $data = [
-                    'title' => $this->request->getPost('title'),
-                    'type' => $this->request->getPost('type'),
-                    'filename' => $this->request->getPost('filename'),
-                    'caption' => $this->request->getPost('caption'),
-                    'kategori' => $this->request->getPost('kategori'),
-                    'created_by' => $userData['name']
-                ];
+                $type = $this->request->getPost('type');
 
-                $model->addGaleri($data);
+                if( $type == 'photo' )
+                {
+                    $title = $this->request->getPost('title');
+                    $filename = str_replace(' ', '-', $title);
 
-                if ($model->affectedRows() > 0) {
-                    return $this->respondDeleted(['message' => 'Success'], 200);
-                } else {
-                    return $this->fail('Error! Failed to delete post.', 500);
+                    $data = [
+                        'title' => $title,
+                        'type' => $type,
+                        'filename' => $filename,
+                        'caption' => $this->request->getPost('caption'),
+                        'kategori' => $this->request->getPost('kategori'),
+                        'created_by' => $userData['name']
+                    ];
+
+                    $model->addGaleri($data);
+
+                    if ($model->affectedRows() > 0) {
+                        return $this->respondDeleted(['message' => 'Success'], 200);
+                    } else {
+                        return $this->fail('Error! Failed to delete post.', 500);
+                    }
+                }else if($type == 'video'){
+
+                    $data = [
+                        'title' => $this->request->getPost('title'),
+                        'type' => $type,
+                        'filename' => $this->request->getPost('filename'),
+                        'caption' => $this->request->getPost('caption'),
+                        'kategori' => $this->request->getPost('kategori'),
+                        'created_by' => $userData['name']
+                    ];
+
+                    $model->addGaleri($data);
+
+                    if ($model->affectedRows() > 0) {
+                        return $this->respondDeleted(['message' => 'Success'], 200);
+                    } else {
+                        return $this->fail('Error! Failed to delete post.', 500);
+                    }
+                }else{
+                    return $this->fail(['code' => '400', 'message' => 'Type must be video or photo'], 400);
                 }
+
             }
         }
 
@@ -65,6 +94,33 @@ class Gallery extends ResourceController
                 $data = $model->getGaleri();
 
                 return $this->respond($data);
+            }
+        }
+
+        return $this->respond('Unauthorized', 401);
+    }
+    public function deleteGaleri($id = null)
+    {
+        $token = $this->request->getServer('HTTP_AUTHORIZATION');
+
+        if($token)
+        {
+            $token = str_replace('Bearer ', '', $token);
+
+            $cache = \Config\Services::cache();
+            $userData = $cache->get('user_' . $token);
+
+            if($userData)
+            {
+                $model = new GalleryModel();
+
+                $model->deleteGal($id);
+
+                if ($model->affectedRows() > 0) {
+                    return $this->respondDeleted(['message' => 'Success'], 201);
+                } else {
+                    return $this->fail('Error! Failed to delete post.', 500);
+                }
             }
         }
 

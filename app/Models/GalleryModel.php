@@ -28,7 +28,7 @@ class GalleryModel extends Model
         return $this->update($id, $data);
     }
 
-    public function deleteFa($id)
+    public function deleteGal($id)
     {
         return $this->delete($id);
     }

@@ -67,6 +67,33 @@ class Facility extends ResourceController
 
         return $this->respond('Unauthorized', 401);
     }
+    public function getFacilitys($id = null)
+    {
+        $token = $this->request->getServer('HTTP_AUTHORIZATION');
+
+        if($token)
+        {
+            $token = str_replace('Bearer ', '', $token);
+            
+            $cache = \Config\Services::cache();
+            $userData = $cache->get('user_' . $token);
+
+            if($userData)
+            {
+                $model = new FacilityModel();
+
+                $data = $model->getFaById($id);
+
+                if ($data) {
+                    return $this->respond($data, 200);
+                } else {
+                    return $this->fail('Post not found.', 404);
+                }
+            }
+        }
+
+        return $this->respond('Unauthorized', 401);
+    }
 
     public function delFacility($id = null)
     {
