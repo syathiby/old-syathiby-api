@@ -30,26 +30,41 @@ class Banner extends ResourceController
         return $this->respond(['code' => '401', 'message' => ''], 401);
     }
 
+    public function banner(){
+        $model = new BannerModel();
+
+        $data = $model->getBanners();
+
+        return $this->respond($data);
+    }
+
     public function postBanner()
     {
         $token = $this->request->getServer('HTTP_AUTHORIZATION');
 
-        if ($token){
+        if ($token) {
             $token = str_replace('Bearer ', '', $token);
 
             $cache = \Config\Services::cache();
             $userData = $cache->get('user_' . $token);
 
-            if($userData){
+            if ($userData) {
                 $model = new BannerModel();
 
                 $title = $this->request->getPost('title');
                 $link = str_replace(' ', '-', $title);
 
+                $imgFile = $this->request->getFile('img');
+                $imgName = '';
+                if ($imgFile && $imgFile->isValid()) {
+                    $imgName = $link . '.' . $imgFile->getClientExtension();
+                    $imgFile->move('upload/Banner', $imgName);
+                }
+
                 $data = [
                     'title' => $title,
                     'caption' => $this->request->getPost('caption'),
-                    'image' => $this->request->getPost('image'),
+                    'image' => $imgName,
                     'link' => $link,
                     'created_by' => $userData['name']
                 ];
@@ -57,13 +72,16 @@ class Banner extends ResourceController
                 $model->createBanner($data);
 
                 if ($model->affectedRows() > 0) {
-                    return $this->respond(['code' => '201','message' => 'Success'], 201);
+                    return $this->respond(['code' => '201', 'message' => 'Success'], 201);
                 } else {
-                    return $this->fail('Error! Failed to update post.', 500);
-                }    
+                    return $this->fail('Error! Failed to create banner.', 500);
+                }
             }
         }
+
+        return $this->respond('Unauthorized', 401);
     }
+
 
     public function deletBanners($id = null)
     {

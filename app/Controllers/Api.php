@@ -76,10 +76,9 @@ class Api extends ResourceController
 
     public function createPost()
     {
-        $token = $this->request->getserver('HTTP_AUTHORIZATION');
+        $token = $this->request->getServer('HTTP_AUTHORIZATION');
 
-        if($token) {
-
+        if ($token) {
             $token = str_replace('Bearer ', '', $token);
 
             $cache = \Config\Services::cache();
@@ -94,9 +93,17 @@ class Api extends ResourceController
 
                 $link = str_replace(' ', '-', $title);
 
+                // Check if an image file is uploaded
+                $imgFile = $this->request->getFile('img');
+                $imgName = '';
+                if ($imgFile && $imgFile->isValid()) {
+                    $imgName = $link . '.' . $imgFile->getClientExtension();
+                    $imgFile->move('upload/Post', $imgName);
+                }
+
                 $data = [
                     'title' => $title,
-                    'img' => $this->request->getPost('img'),
+                    'img' => $imgName,
                     'description' => $this->request->getPost('description'),
                     'label' => $this->request->getPost('label'),
                     'meta' => $this->request->getPost('meta'),
@@ -115,8 +122,8 @@ class Api extends ResourceController
         }
 
         return $this->respond('Unauthorized', 401);
-        
     }
+
 
     public function updatePost($id = null)
     {

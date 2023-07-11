@@ -35,10 +35,11 @@ $routes->setAutoRoute(true);
 $routes->get('/', 'Home::index');
 
 // v1 API Post
-$routes->group('v1', function($routes) {
+$routes->group('v1', ['filter' => 'cors'], function($routes) {
     // v1 API Post
     $routes->get('post', 'Api::posts');
     $routes->get('post/(:segment)', 'Api::post/$1');
+    $routes->get('banner', 'Banner::banner');
 
     // V1 Admin Post
     $routes->group('admin/post', function($routes) {
