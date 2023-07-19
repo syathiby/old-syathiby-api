@@ -104,7 +104,7 @@ class Labels extends ResourceController
                     return $this->fail('Post ID not provided.', 400);
                 }
 
-                $model->deletePosts($id);
+                $model->deleteLabel($id);
 
                 if ($model->affectedRows() > 0) {
                     return $this->respondDeleted(['message' => 'Success'], 200);

@@ -53,11 +53,14 @@ $routes->group('v1', ['filter' => 'cors'], function($routes) {
     // V1 Admin Label
     $routes->group('admin/label', function($routes) {
         $routes->get('', 'Labels::showLabels');
-        $routes->get('(:segment)', 'Labels::showLabel/$1');
+        $routes->get('(:num)', 'Labels::showLabel/$1');
         $routes->post('', 'Labels::addLabels');
         $routes->put('(:num)', 'Labels::addLabels');
-        $routes->delete('(:num)', 'Labels::deleteLabels/$1');
+        // $routes->delete('(:num)', 'Labels::deleteLabels/$1');
     });
+
+    $routes->delete('admin/label/(:num)', 'Labels::deleteLabels/$1');
+    $routes->get('admin/label/(:segment)', 'Labels::showLabel/$1');
 
     // V1 Admin Banner
     $routes->post('admin/banner', 'Banner::postBanner');
