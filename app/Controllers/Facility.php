@@ -124,4 +124,18 @@ class Facility extends ResourceController
 
         return $this->respond('Unauthorized', 401);
     }
+
+    public function getFacilityAll()
+    {
+        $model = new FacilityModel();
+
+        $data = $model->getFa();
+
+        if ($data) {
+            return $this->respond($data, 200);
+        } else {
+            return $this->fail('Post not found.', 404);
+        }
+
+    }
 }

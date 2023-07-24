@@ -20,12 +20,24 @@ class PostModel extends Model
 
     public function getPost()
     {
-        return $this->findAll();
+        $query = $this->table($this->table)
+        ->select($this->table . '.id AS ' . $this->table . '_id, ' . $this->table . '.title, ' . $this->table . '.img, ' . $this->table . '.description, ' . $this->table . '.label, ' . $this->table . '.meta, ' . $this->table . '.link, ' . $this->table . '.created_by,'.$this->table.'.created_at, labels.name, labels.color')
+        ->join('labels', 'labels.id = ' . $this->table . '.label', 'left')
+        ->orderBy($this->table . '.created_at', 'DESC')
+        ->findAll();
+
+        return $query;
     }
 
     public function getPostByLink($link)
     {
-        return $this->where('link', $link)->first();
+        $query = $this->table($this->table)
+        ->select($this->table . '.id AS ' . $this->table . '_id, ' . $this->table . '.title, ' . $this->table . '.img, ' . $this->table . '.description, ' . $this->table . '.label, ' . $this->table . '.meta, ' . $this->table . '.link, ' . $this->table . '.created_by,'.$this->table.'.created_at, labels.name, labels.color')
+        ->join('labels', 'labels.id = ' . $this->table . '.label', 'left')
+        ->where('link', $link)
+        ->first();
+
+        return $query;
     }
 
     public function updatePosts($id, $data)

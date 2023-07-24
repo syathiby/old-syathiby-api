@@ -65,10 +65,9 @@ class Auth extends ResourceController
         $user = $model->login($username, $password);
 
         if ($user) {
-            // User authentication successful, save user data to cache
             $cache = \Config\Services::cache();
             $token = $user['token'];
-            $cache->save('user_' . $token, $user, 3600); // Cache for 1 hour
+            $cache->save('user_' . $token, $user, 86400); 
 
             return $this->respond($user);
         } else {
