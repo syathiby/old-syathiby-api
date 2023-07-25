@@ -32,10 +32,17 @@ class Gallery extends ResourceController
                     $title = $this->request->getPost('title');
                     $filename = str_replace(' ', '-', $title);
 
+                    $imgFile = $this->request->getFile('img');
+                    $imgName = '';
+                    if ($imgFile && $imgFile->isValid()) {
+                        $imgName = $filename . '.' . $imgFile->getClientExtension();
+                        $imgFile->move('upload/Galeri', $imgName);
+                    }
+
                     $data = [
                         'title' => $title,
                         'type' => $type,
-                        'filename' => $filename,
+                        'filename' => $imgName,
                         'caption' => $this->request->getPost('caption'),
                         'kategori' => $this->request->getPost('kategori'),
                         'created_by' => $userData['name']
@@ -48,6 +55,7 @@ class Gallery extends ResourceController
                     } else {
                         return $this->fail('Error! Failed to delete post.', 500);
                     }
+                    
                 }else if($type == 'video'){
 
                     $data = [

@@ -20,7 +20,7 @@ class FacilityModel extends Model
 
     public function getFa()
     {
-        return $this->findAll();
+        return $this->orderBy($this->table . '.created_at', 'DESC')->findAll();
     }
 
     public function getFaById($id)

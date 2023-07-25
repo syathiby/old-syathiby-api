@@ -20,7 +20,7 @@ class GalleryModel extends Model
 
     public function getGaleri()
     {
-        return $this->findAll();
+        return $this->orderBy($this->table . '.created_at', 'DESC')->findAll();
     }
 
     public function updateLabel($id, $data)
