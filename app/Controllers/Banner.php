@@ -52,12 +52,12 @@ class Banner extends ResourceController
                 $model = new BannerModel();
 
                 $title = $this->request->getPost('title');
-                $link = str_replace(' ', '-', $title);
+                $truncateTitle = str_replace(' ', '-', $title);
 
                 $imgFile = $this->request->getFile('img');
                 $imgName = '';
                 if ($imgFile && $imgFile->isValid()) {
-                    $imgName = $link . '.' . $imgFile->getClientExtension();
+                    $imgName = $truncateTitle . '.' . $imgFile->getClientExtension();
                     $imgFile->move('upload/Banner', $imgName);
                 }
 
@@ -65,7 +65,7 @@ class Banner extends ResourceController
                     'title' => $title,
                     'caption' => $this->request->getPost('caption'),
                     'image' => $imgName,
-                    'link' => $link,
+                    'link' => $this->request->getPost('link'),
                     'created_by' => $userData['name']
                 ];
 
@@ -87,27 +87,38 @@ class Banner extends ResourceController
     {
         $token = $this->request->getServer('HTTP_AUTHORIZATION');
 
-        if ($token){
+        if ($token) {
             $token = str_replace('Bearer ', '', $token);
 
             $cache = \Config\Services::cache();
             $userData = $cache->get('user_' . $token);
 
-            if($userData){
+            if ($userData) {
                 $model = new BannerModel();
 
                 if ($id === null) {
-                    return $this->fail('Post ID not provided.', 400);
+                    return $this->fail('Banner ID not provided.', 400);
                 }
 
-                $model->deleteBanner($id);
+                $bannerData = $model->getBannerId($id);
+                $imageFilename = $bannerData['image'];
+
+                $model->delete($id);
 
                 if ($model->affectedRows() > 0) {
+                    // Delete the image file from the public/upload/Banner directory
+                    $uploadPath = ROOTPATH . 'public/upload/Banner/' . $imageFilename; // Adjust the path based on your setup
+                    if (file_exists($uploadPath)) {
+                        unlink($uploadPath);
+                    }
+
                     return $this->respondDeleted(['message' => 'Success'], 200);
                 } else {
-                    return $this->fail('Error! Failed to delete post.', 500);
+                    return $this->fail('Error! Failed to delete banner.', 500);
                 }
             }
         }
     }
+
+
 }

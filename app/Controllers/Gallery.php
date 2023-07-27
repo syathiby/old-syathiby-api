@@ -107,6 +107,15 @@ class Gallery extends ResourceController
 
         return $this->respond('Unauthorized', 401);
     }
+    public function getGaleri()
+    {
+        
+        $model = new GalleryModel();
+
+        $data = $model->getGaleri();
+
+        return $this->respond($data);
+    }
     public function deleteGaleri($id = null)
     {
         $token = $this->request->getServer('HTTP_AUTHORIZATION');
@@ -122,12 +131,22 @@ class Gallery extends ResourceController
             {
                 $model = new GalleryModel();
 
+                
+                $bannerData = $model->getGaleriId($id);
+                $imageFilename = $bannerData['filename'];
+                
                 $model->deleteGal($id);
 
                 if ($model->affectedRows() > 0) {
-                    return $this->respondDeleted(['message' => 'Success'], 201);
+
+                    $uploadPath = ROOTPATH . 'public/upload/Galeri/' . $imageFilename;
+                    if (file_exists($uploadPath)) {
+                        unlink($uploadPath);
+                    }
+
+                    return $this->respondDeleted(['message' => 'Success'], 200);
                 } else {
-                    return $this->fail('Error! Failed to delete post.', 500);
+                    return $this->fail('Error! Failed to delete banner.', 500);
                 }
             }
         }
@@ -191,6 +210,16 @@ class Gallery extends ResourceController
         }
 
         return $this->respond('Unauthorized!', 401);
+    }
+    public function getKategorie()
+    {
+
+        $model = new KategoriModel();
+
+        $data = $model->getKat();
+
+        return $this->respond($data, 200);
+           
     }
 
     public function deleteKategori($id = null)

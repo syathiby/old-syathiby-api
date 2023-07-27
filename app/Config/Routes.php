@@ -41,6 +41,8 @@ $routes->group('v1', ['filter' => 'cors'], function($routes) {
     $routes->get('post/(:segment)', 'Api::post/$1');
     $routes->get('banner', 'Banner::banner');
     $routes->get('facility', 'Facility::getFacilityAll');
+    $routes->get('galeri', 'Gallery::getGaleri');
+    $routes->get('kategori', 'Gallery::getKategorie');
 
     // V1 Admin Post
     $routes->group('admin/post', function($routes) {

@@ -20,7 +20,16 @@ class GalleryModel extends Model
 
     public function getGaleri()
     {
-        return $this->orderBy($this->table . '.created_at', 'DESC')->findAll();
+        $this->select('gallery.id, gallery.title, gallery.type, gallery.type, gallery.filename, gallery.caption, kategori.nkategori, gallery.created_by, gallery.updated_at');
+        $this->join('kategori', 'gallery.kategori = kategori.id');
+        $this->orderBy($this->table.'.created_at', 'DESC');
+
+        return $this->findAll();
+    }
+
+    public function getGaleriId($id)
+    {
+        return $this->where('id', $id)->first();
     }
 
     public function updateLabel($id, $data)

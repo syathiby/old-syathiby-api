@@ -18,6 +18,11 @@ class BannerModel extends Model
         return $this->insert($data);
     }
 
+    public function getBannerId($id)
+    {
+        return $this->where('id', $id)->first();
+    }
+
     public function getBanners()
     {
         return $this->findAll();
