@@ -21,7 +21,7 @@ class AuthModel extends Model
 
     public function getUserData()
     {
-        return $this->findAll();
+        return $this->whereNotIn('role', ['admin'])->findAll();
     }
 
     public function login($username, $password)
@@ -64,6 +64,11 @@ class AuthModel extends Model
         }
 
         return false;
+    }
+
+    public function deleteUs($id)
+    {
+        return $this->delete($id);
     }
 
 }

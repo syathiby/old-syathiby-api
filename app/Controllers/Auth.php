@@ -12,19 +12,38 @@ class Auth extends ResourceController
 
     public function getUsers()
     {
-        // Check if the bearer token is present in the request headers
         $token = $this->request->getServer('HTTP_AUTHORIZATION');
         if ($token) {
-            // Remove the 'Bearer ' prefix from the token
             $token = str_replace('Bearer ', '', $token);
 
-            // Retrieve the user data from the cache based on the token
             $cache = \Config\Services::cache();
             $userData = $cache->get('user_' . $token);
 
             if ($userData) {
-                // User authentication successful, return the user data
                 return $this->respond($userData);
+            }
+        }
+
+        // User authentication failed, return an error response
+        return $this->failUnauthorized('Unauthorized');
+    }
+
+    public function getUserData()
+    {
+        $token = $this->request->getServer('HTTP_AUTHORIZATION');
+        if ($token) {
+            $token = str_replace('Bearer ', '', $token);
+
+            $cache = \Config\Services::cache();
+            $userData = $cache->get('user_' . $token);
+
+            if ($userData) {
+
+                $model = new AuthModel();
+
+                $data = $model->getUserData();
+
+                return $this->respond($data, 200);
             }
         }
 
@@ -98,5 +117,35 @@ class Auth extends ResourceController
         } else {
             return $this->fail('Failed to logout', 500);
         }
+    }
+
+    public function deleteUser($id = null)
+    {
+        $token = $this->request->getServer('HTTP_AUTHORIZATION');
+
+        if ($token){
+            $token = str_replace('Bearer ', '', $token);
+
+            $cache = \Config\Services::cache();
+            $userData = $cache->get('user_' . $token);
+
+            if($userData){
+                $model = new AuthModel();
+
+                if ($id === null) {
+                    return $this->fail('Post ID not provided.', 400);
+                }
+
+                $model->deleteUs($id);
+
+                if ($model->affectedRows() > 0) {
+                    return $this->respondDeleted(['message' => 'Success'], 200);
+                } else {
+                    return $this->fail('Error! Failed to delete post.', 500);
+                }
+            }
+        }
+
+        return $this->respond('Unauthorized', 401);
     }
 }

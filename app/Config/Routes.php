@@ -91,8 +91,10 @@ $routes->group('v1', ['filter' => 'cors'], function($routes) {
     $routes->post('logout', 'Auth::logoutUser');
 
     // v1 Api create User
-    $routes->post('sign-up', 'Auth::createUser');
+    $routes->post('signUp', 'Auth::createUser');
     $routes->get('users', 'Auth::getUsers');
+    $routes->delete('admin/deleteUsers/(:num)', 'Auth::deleteUser/$1');
+    $routes->get('admin/users', 'Auth::getUserData');
 });
 
 
