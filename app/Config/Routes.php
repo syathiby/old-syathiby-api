@@ -39,10 +39,13 @@ $routes->group('v1', ['filter' => 'cors'], function($routes) {
     // v1 API Post
     $routes->get('post', 'Api::posts');
     $routes->get('post/(:segment)', 'Api::post/$1');
+    $routes->get('post/label/(:segment)', 'Api::showLabelBl/$1');
+
     $routes->get('banner', 'Banner::banner');
     $routes->get('facility', 'Facility::getFacilityAll');
     $routes->get('galeri', 'Gallery::getGaleri');
     $routes->get('kategori', 'Gallery::getKategorie');
+    $routes->get('label', 'Labels::showLabelB');
 
     // V1 Admin Post
     $routes->group('admin/post', function($routes) {

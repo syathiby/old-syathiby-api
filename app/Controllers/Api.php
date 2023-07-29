@@ -73,6 +73,18 @@ class Api extends ResourceController
             return $this->fail('Post not found.', 404);
         }
     }
+    public function showLabelBl($link = null)
+    {
+        $model = new PostModel();
+
+        $post = $model->getPostByLabel($link);
+    
+        if ($post) {
+            return $this->respond($post, 200);
+        } else {
+            return $this->fail('Post not found.', 404);
+        }
+    }
 
     public function createPost()
     {

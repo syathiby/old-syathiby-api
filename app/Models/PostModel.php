@@ -39,6 +39,18 @@ class PostModel extends Model
 
         return $query;
     }
+    public function getPostByLabel($link)
+    {
+        $query = $this->table($this->table)
+        ->select($this->table . '.id AS ' . $this->table . '_id, ' . $this->table . '.title, ' . $this->table . '.img, ' . $this->table . '.description, ' . $this->table . '.label, ' . $this->table . '.meta, ' . $this->table . '.link, ' . $this->table . '.created_by,'.$this->table.'.created_at, labels.name, labels.color')
+        ->join('labels', 'labels.id = ' . $this->table . '.label', 'left')
+        ->where('labels.name', $link)
+        ->orderBy($this->table . '.created_at', 'DESC')
+        ->findAll();
+
+        return $query;
+    }
+
 
     public function updatePosts($id, $data)
     {

@@ -63,6 +63,17 @@ class Labels extends ResourceController
         }
         return $this->respond(['Code' => '401','Message' => 'UnAuthorized'], 401);
     }
+
+    public function showLabelB()
+    {
+        
+        $model = new LabelModel();
+
+        $data = $model->getLabel();
+
+        return $this->respond($data);
+            
+    }
     public function showLabel($name = null)
     {
         $token = $this->request->getServer('HTTP_AUTHORIZATION');

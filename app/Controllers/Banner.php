@@ -6,6 +6,8 @@ use App\Models\BannerModel;
 use CodeIgniter\API\ResponseTrait;
 use CodeIgniter\RESTful\ResourceController;
 
+use Intervention\Image\ImageManagerStatic as Image;
+
 class Banner extends ResourceController
 {
     use ResponseTrait;
@@ -39,48 +41,66 @@ class Banner extends ResourceController
     }
 
     public function postBanner()
-    {
-        $token = $this->request->getServer('HTTP_AUTHORIZATION');
+{
+    $token = $this->request->getServer('HTTP_AUTHORIZATION');
 
-        if ($token) {
-            $token = str_replace('Bearer ', '', $token);
+    if ($token) {
+        $token = str_replace('Bearer ', '', $token);
 
-            $cache = \Config\Services::cache();
-            $userData = $cache->get('user_' . $token);
+        $cache = \Config\Services::cache();
+        $userData = $cache->get('user_' . $token);
 
-            if ($userData) {
-                $model = new BannerModel();
+        if ($userData) {
+            $model = new BannerModel();
 
-                $title = $this->request->getPost('title');
-                $truncateTitle = str_replace(' ', '-', $title);
+            $title = $this->request->getPost('title');
+            $truncateTitle = str_replace(' ', '-', $title);
 
-                $imgFile = $this->request->getFile('img');
-                $imgName = '';
-                if ($imgFile && $imgFile->isValid()) {
-                    $imgName = $truncateTitle . '.' . $imgFile->getClientExtension();
-                    $imgFile->move('upload/Banner', $imgName);
-                }
+            $imgFile = $this->request->getFile('img');
+            $imgName = '';
+            if ($imgFile && $imgFile->isValid()) {
+                $imgName = $truncateTitle . '.' . $imgFile->getClientExtension();
 
-                $data = [
-                    'title' => $title,
-                    'caption' => $this->request->getPost('caption'),
-                    'image' => $imgName,
-                    'link' => $this->request->getPost('link'),
-                    'created_by' => $userData['name']
-                ];
+                // Move the original image to the destination directory
+                $imgFile->move('upload/Banner', $imgName);
 
-                $model->createBanner($data);
+                // Load the image using Intervention/Image
+                $image = Image::make('upload/Banner/' . $imgName);
 
-                if ($model->affectedRows() > 0) {
-                    return $this->respond(['code' => '201', 'message' => 'Success'], 201);
-                } else {
-                    return $this->fail('Error! Failed to create banner.', 500);
-                }
+                // Set the maximum allowed dimensions for the resized image
+                $maxWidth = 800;
+                $maxHeight = 600;
+
+                // Resize the image while maintaining the aspect ratio
+                $image->resize($maxWidth, $maxHeight, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+
+                // Save the resized image with a lower quality
+                $image->save('upload/Banner/' . $imgName, 80);
+            }
+
+            $data = [
+                'title' => $title,
+                'caption' => $this->request->getPost('caption'),
+                'image' => $imgName,
+                'link' => $this->request->getPost('link'),
+                'created_by' => $userData['name']
+            ];
+
+            $model->createBanner($data);
+
+            if ($model->affectedRows() > 0) {
+                return $this->respond(['code' => '201', 'message' => 'Success'], 201);
+            } else {
+                return $this->fail('Error! Failed to create banner.', 500);
             }
         }
-
-        return $this->respond('Unauthorized', 401);
     }
+
+    return $this->respond('Unauthorized', 401);
+}
 
 
     public function deletBanners($id = null)
