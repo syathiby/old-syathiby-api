@@ -47,6 +47,8 @@ $routes->group('v1', ['filter' => 'cors'], function($routes) {
     $routes->get('kategori', 'Gallery::getKategorie');
     $routes->get('label', 'Labels::showLabelB');
 
+    $routes->get('testimoni', 'Testimonial::getAllTesti');
+
     // V1 Admin Post
     $routes->group('admin/post', function($routes) {
         $routes->get('', 'API::postsAdmin');
@@ -72,6 +74,11 @@ $routes->group('v1', ['filter' => 'cors'], function($routes) {
     $routes->post('admin/banner', 'Banner::postBanner');
     $routes->get('admin/banner', 'Banner::getBanner');
     $routes->delete('admin/banner/(:num)', 'Banner::deletBanners/$1');
+
+    // v1 Testimoni Admin
+    $routes->post('admin/testimoni', 'Testimonial::addTesti');
+    $routes->get('admin/testimoni', 'Testimonial::getTestimonial');
+    $routes->delete('admin/testimoni/(:num)', 'Testimonial::delTestimonial/$1');
 
     // V1 Admin Facility
     $routes->get('admin/facility', 'Facility::getFacility');
