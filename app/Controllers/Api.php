@@ -139,37 +139,55 @@ class Api extends ResourceController
 
     public function updatePost($id = null)
     {
-        $model = new PostModel();
+        $token = $this->request->getServer('HTTP_AUTHORIZATION');
 
-        if ($id === null) {
-            return $this->fail('Post ID not provided.', 400);
+        if ($token) {
+            $token = str_replace('Bearer ', '', $token);
+
+            $cache = \Config\Services::cache();
+            $user = $cache->get('user_' . $token);
+            if ($user) {
+                $model = new PostModel();
+
+                                // Check if an image file is uploaded
+                $link = $this->request->getPost('link');
+                $statusPublish = $this->request->getPost('status_publish');
+                $imgFile = $this->request->getFile('img');
+                $imgName = '';
+
+                if ($imgFile && $imgFile->isValid()) {
+                    // If an image is uploaded, update the image and link
+                    $imgName = $link . '.' . $imgFile->getClientExtension();
+                    $imgFile->move('upload/Post', $imgName);
+
+                    $data = [
+                        'img' => $imgName,
+                        'status_publish' => $statusPublish,
+                        'updated_by' => $user['name'],
+                        'publish_by' => $user['name'],
+                    ];
+                } else {
+                    // If no image is uploaded, update only the status_publish
+                    $data = [
+                        'status_publish' => $statusPublish,
+                        'updated_by' => $user['name'],
+                        'publish_by' => $user['name'],
+                    ];
+                }
+
+                $model->updatePosts($id, $data);
+
+                if ($model->affectedRows() > 0) {
+                    return $this->respondCreated(['message' => 'Success'], 201);
+                } else {
+                    return $this->fail('Error! Failed to create post.', 500);
+                }
+
+            }
         }
 
-        $title = $this->request->getPost('title');
-        if (empty($title)) {
-            return $this->fail('Error! Title is required.', 400);
-        }
-
-        $link = str_replace(' ', '-', $title);
-
-        $data = [
-            'title' => $title,
-            'img' => $this->request->getPost('img'),
-            'description' => $this->request->getPost('description'),
-            'label' => $this->request->getPost('label'),
-            'meta' => $this->request->getPost('meta'),
-            'link' => $link
-        ];
-
-        $model->updatePosts($id, $data);
-
-        if ($model->affectedRows() > 0) {
-            return $this->respond(['message' => 'Success'], 200);
-        } else {
-            return $this->fail('Error! Failed to update post.', 500);
-        }
+        return $this->respond('Unauthorized', 401);
     }
-
     public function deletePost($id = null)
     {
         $token = $this->request->getserver('HTTP_AUTHORIZATION');

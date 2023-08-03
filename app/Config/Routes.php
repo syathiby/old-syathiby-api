@@ -54,7 +54,7 @@ $routes->group('v1', ['filter' => 'cors'], function($routes) {
         $routes->get('', 'API::postsAdmin');
         $routes->get('(:segment)', 'Api::postAdmin/$1');
         $routes->post('', 'Api::createPost');
-        $routes->put('(:num)', 'Api::updatePost/$1');
+        $routes->post('(:num)', 'Api::updatePost/$1');
         $routes->delete('(:num)', 'Api::deletePost/$1');
     });
 

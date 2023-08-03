@@ -8,7 +8,7 @@ class PostModel extends Model
 {
     protected $table = 'posts';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['title', 'img', 'description', 'label', 'meta', 'link', 'created_by'];
+    protected $allowedFields = ['title', 'img', 'description', 'label', 'meta', 'link', 'created_by', 'updated_by', 'status_publish'];
     protected $useTimestamps = true;
     protected $createdField = 'created_at';
     protected $updatedField = 'updated_at';
@@ -21,7 +21,7 @@ class PostModel extends Model
     public function getPost()
     {
         $query = $this->table($this->table)
-        ->select($this->table . '.id AS ' . $this->table . '_id, ' . $this->table . '.title, ' . $this->table . '.img, ' . $this->table . '.description, ' . $this->table . '.label, ' . $this->table . '.meta, ' . $this->table . '.link, ' . $this->table . '.created_by,'.$this->table.'.created_at, labels.name, labels.color')
+        ->select($this->table . '.id AS ' . $this->table . '_id, ' . $this->table . '.title, '. $this->table . '.status_publish, ' . $this->table . '.img, ' . $this->table . '.description, ' . $this->table . '.label, ' . $this->table . '.meta, ' . $this->table . '.link, ' . $this->table . '.created_by,'.$this->table.'.created_at, labels.name, labels.color')
         ->join('labels', 'labels.id = ' . $this->table . '.label', 'left')
         ->orderBy($this->table . '.created_at', 'DESC')
         ->findAll();

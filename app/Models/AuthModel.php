@@ -21,7 +21,7 @@ class AuthModel extends Model
 
     public function getUserData()
     {
-        return $this->whereNotIn('role', ['admin'])->findAll();
+        return $this->findAll();
     }
 
     public function login($username, $password)
